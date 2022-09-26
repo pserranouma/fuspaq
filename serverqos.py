@@ -16,6 +16,6 @@ class serverqos:
             print('QoS set to ' + request)
 
     def start(self):
-        with socketserver.ThreadingTCPServer(('', server.port), server.handler) as httpd:
+        with socketserver.ThreadingTCPServer(('', serverqos.port), serverqos.handler) as httpd:
             print("QoS server started")
             httpd.serve_forever()

@@ -16,8 +16,8 @@ class server:
             self.send_response(200)
             self.end_headers()
             print('Requesting function ' + fname)
-            #r = requests.get("http://" + faasserver + ":" + str(server.faasport) + '/' + fname)
-            #print(r.text)
+            r = requests.get("http://" + server.faasserver + ":" + str(server.faasport) + '/' + fname)
+            print(r.text)
 
     def start(self):
         with socketserver.ThreadingTCPServer(('', server.port), server.handler) as httpd:
