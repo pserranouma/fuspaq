@@ -12,12 +12,19 @@ class repository:
         self.functions.append(function)
 
     def load(self, rep):
-        print("Loading repository " + rep)
-        with open(rep + ".json") as file:
+        try:
+            file = open(rep + ".json")
+            print("Loading repository " + rep)
+        except OSError:
+            print("Error reading repository " + rep)
+            exit()
+        with file:
             data = json.load(file)
             for i in range(len(data['functions'])):
                 dataf = data['functions'][i]
-                f = function.function(dataf['name'], dataf['service'])
+                if 'params' in dataf.keys():
+                    f = function.function(dataf['name'], dataf['service'], dataf['params'])
+                else: f = function.function(dataf['name'], dataf['service'])
                 f.execTime = dataf['execTime']
                 f.cost = dataf['cost']
                 self.addFunction(f)

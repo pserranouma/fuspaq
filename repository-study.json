@@ -1,0 +1,166 @@
+{
+	"functions": [
+		{
+			"name": "get-locations",
+			"service": "GetLocations",
+			"params":
+				{
+					"radious": 1
+				},
+			"execTime": 1,
+			"cost": 2
+		},
+		{
+			"name": "get-locations",
+			"service": "GetLocations",
+			"params":
+				{
+					"radious": 10
+				},
+			"execTime": 2,
+			"cost": 3
+		},
+		{
+			"name": "get-locations",
+			"service": "GetLocations",
+			"params":
+				{
+					"radious": 100
+				},
+			"execTime": 3,
+			"cost": 4
+		},
+		{
+			"name": "get-images-a",
+			"service": "GetImages",
+			"execTime": 3,
+			"cost": 2
+		},
+		{
+			"name": "get-images-b",
+			"service": "GetImages",
+			"execTime": 4,
+			"cost": 2
+		},
+		{
+			"name": "render-images",
+			"service": "RenderImages",
+			"params":
+				{
+					"resolution": 480,
+					"number": 1
+				},
+			"execTime": 4,
+			"cost": 4
+		},
+		{
+			"name": "render-images",
+			"service": "RenderImages",
+			"params":
+				{
+					"resolution": 720,
+					"number": 1
+				},
+			"execTime": 5,
+			"cost": 5
+		},
+		{
+			"name": "render-images",
+			"service": "RenderImages",
+			"params":
+				{
+					"resolution": 1080,
+					"number": 1
+				},
+			"execTime": 6,
+			"cost": 6
+		},
+		{
+			"name": "render-images",
+			"service": "RenderImages",
+			"params":
+				{
+					"resolution": 480,
+					"number": 2
+				},
+			"execTime": 6,
+			"cost": 6
+		},
+		{
+			"name": "render-images",
+			"service": "RenderImages",
+			"params":
+				{
+					"resolution": 720,
+					"number": 2
+				},
+			"execTime": 7,
+			"cost": 7
+		},
+		{
+			"name": "render-images",
+			"service": "RenderImages",
+			"params":
+				{
+					"resolution": 1080,
+					"number": 2
+				},
+			"execTime": 8,
+			"cost": 8
+		},
+		{
+			"name": "get-sensor-data-a",
+			"service": "GetSensorData",
+			"execTime": 10,
+			"cost": 8
+		},
+		{
+			"name": "get-sensor-data-b",
+			"service": "GetSensorData",
+			"execTime": 20,
+			"cost": 8
+		},
+		{
+			"name": "show-data-a",
+			"service": "ShowData",
+			"execTime": 3,
+			"cost": 2
+		},
+		{
+			"name": "show-data-b",
+			"service": "ShowData",
+			"execTime": 4,
+			"cost": 1
+		},
+		{
+			"name": "get-sat-model",
+			"service": "GetSatModel",
+			"execTime": 3,
+			"cost": 7
+		},
+		{
+			"name": "get-sat-model-b",
+			"service": "GetSatModel",
+			"execTime": 4,
+			"cost": 6
+		},
+		{
+			"name": "get-sat-model-c",
+			"service": "GetSatModel",
+			"execTime": 6,
+			"cost": 6
+		},
+		{
+			"name": "process-model",
+			"service": "ProcessModel",
+			"execTime": 10,
+			"cost": 12
+		},
+		{
+			"name": "render-map",
+			"service": "RenderMap",
+			"execTime": 12,
+			"cost": 10
+		}
+	]
+}

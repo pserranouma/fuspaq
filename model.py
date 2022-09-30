@@ -10,10 +10,16 @@ class model:
         self.workflows = []
         self.tasks = []
         self.services = []
+        self.constraints = []
 
     def load(self, model):
-        print("Loading model " + model)
-        with open(model + ".json") as file:
+        try:
+            file = open(model + ".json")
+            print("Loading model " + model)
+        except OSError:
+            print("Error reading model " + model)
+            exit()
+        with file:
             data = json.load(file)
             self.name = data['name']
             self.workflows = data['workflows']
@@ -27,16 +33,16 @@ class model:
                 self.tasks.append(t)
                 print("Task " + t.name + " loaded")
     
-    def createTasks(self,wf,ntask,ntasks): # ntasks pendientes de crear
+    def createTasks(self,wf,ntask,ntasks): # ntasks pending to create
         ops = (['and', 'or', 'xor'])
         wf["op"] = choice(ops)
         wf["tasks"] = []
         #print(wf["op"])
         ntasks_ant = ntasks
         #print(ntasks_ant)
-        nt = ntask # id de la siguiente tarea a asignar
+        nt = ntask # id of the next task to assign
         #print(nt)
-        while ntasks > 0: # queremos asignar ntasks tareas
+        while ntasks > 0: # ntaks to assign
             if ntasks == 1:
                 t = {}
                 t["name"] = "t"+ str(nt)
@@ -69,15 +75,15 @@ class model:
                         wf["tasks"].append(nwf)
                         ntasks = 0
 
-    def createParallelTasks(self,wf,ntask,ntasks): # ntasks pendientes de crear
+    def createParallelTasks(self,wf,ntask,ntasks): # ntasks pending to create
         wf["op"] = 'and'
         wf["tasks"] = []
         #print(wf["op"])
         ntasks_ant = ntasks
         #print(ntasks_ant)
-        nt = ntask # id de la siguiente tarea a asignar
+        nt = ntask # id of the next task to assign
         #print(nt)
-        while ntasks > 0: # queremos asignar ntasks tareas
+        while ntasks > 0: # ntasks to assign
             t = {}
             t["name"] = "t"+ str(nt)
             nt += 1

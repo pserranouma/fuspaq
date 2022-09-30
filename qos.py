@@ -12,7 +12,7 @@ class qos:
     def __init__(self, rep, mod):
         self.rep = rep
         self.mod = mod
-        self.objetive = MINCOST
+        self.objective = MINCOST
         self.tmax = 0
         self.cmax = 0
 
@@ -76,11 +76,11 @@ class qos:
         for task in self.mod.tasks:
             execTask[task.name] = Bool(task.name)
             totalCost = Sum(totalCost, If(execTask[task.name], taskCost[task.name], 0))
-        if self.objetive == MINCOST:
+        if self.objective == MINCOST:
             if self.tmax != 0:
                 for task in self.mod.tasks:
                     opt.add(If(execTask[task.name], taskExecTime[task.name] <= RealVal(self.tmax), True))
-        elif self.objetive == MINTIME:
+        elif self.objective == MINTIME:
             for task in self.mod.tasks:
                 opt.add(If(execTask[task.name], taskExecTime[task.name] <= maxtime, True))
             if self.cmax != 0:
@@ -91,9 +91,9 @@ class qos:
             wm = self.getWorkflowModel(execTask, wf)
             opt.add(wm)
         start_time_opt = datetime.datetime.now()
-        if self.objetive == MINCOST:
+        if self.objective == MINCOST:
             opt.minimize(totalCost)
-        elif self.objetive == MINTIME:
+        elif self.objective == MINTIME:
             opt.minimize(maxtime)
         if opt.check() == sat:
             z3m = opt.model()
@@ -123,3 +123,11 @@ class qos:
 
         return config
 
+    def readObjective(self, objective):
+        if objective == "mincost":
+            self.objective = MINCOST
+            print('Objective set to mincost')
+        elif objective == "mintime":
+            self.objective = MINTIME
+            print('Objective set to mintime')
+        else: print('Invalid value for objective')

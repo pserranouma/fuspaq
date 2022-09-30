@@ -1,0 +1,85 @@
+{
+	"name": "widget",
+	"workflows": [
+		{
+			"name": "main",
+			"op": "and",
+			"tasks": [
+				{
+					"description": "Show Photos",
+					"name": "ShowPhotos"
+				},
+				{
+					"op": "xor",
+					"tasks": [
+						{
+							"description": "Local Info",
+							"name": "LocalInfo"
+						},
+						{
+							"description": "Sat Info",
+							"name": "SatInfo"
+						}
+					]
+				}
+			]
+		}
+	],
+	"taskservices": [
+		{
+			"task": "ShowPhotos",
+			"services": [
+				{
+					"description": "Get Locations",
+					"name": "GetLocations"
+				},
+				{
+					"description": "Get Images",
+					"name": "GetImages"
+				},
+				{
+					"description": "Render Images",
+					"name": "RenderImages"
+				}
+			]
+		},
+		{
+			"task": "LocalInfo",
+			"services": [
+				{
+					"description": "Get Sensor Data",
+					"name": "GetSensorData"
+				},
+				{
+					"description": "Show Data",
+					"name": "Show Data"
+				}
+			]
+		},
+		{
+			"task": "SatInfo",
+			"services": [
+				{
+					"description": "Get Sat Model",
+					"name": "GetSatModel"
+				},
+				{
+					"description": "Process Model",
+					"name": "ProcessModel"
+				},
+				{
+					"description": "Render Map",
+					"name": "RenderMap"
+				}
+			]
+		}
+	],
+	"constraints": [
+		{
+			"c1": "show-data-c implies render-images-a"
+		},
+		{
+			"c2": "render-images-a implies (resolution not 480)"
+		}
+	]
+}
