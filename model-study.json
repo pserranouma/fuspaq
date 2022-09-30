@@ -52,7 +52,7 @@
 				},
 				{
 					"description": "Show Data",
-					"name": "Show Data"
+					"name": "ShowData"
 				}
 			]
 		},
@@ -74,12 +74,9 @@
 			]
 		}
 	],
-	"constraints": [
+	"constraints":
 		{
 			"c1": "show-data-c implies render-images-a"
-		},
-		{
 			"c2": "render-images-a implies (resolution not 480)"
 		}
-	]
 }
