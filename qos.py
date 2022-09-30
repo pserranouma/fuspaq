@@ -1,3 +1,4 @@
+from tkinter import Wm
 import repository
 import model
 import configuration
@@ -12,9 +13,15 @@ class qos:
     def __init__(self, rep, mod):
         self.rep = rep
         self.mod = mod
+        # default values:
         self.objective = MINCOST
         self.tmax = 0
         self.cmax = 0
+        # cached values:
+        self.wm = {}
+        self.execTask = {}
+        self.taskExecTime = {}
+        self.totalCost = {}
 
     def getWorkflowModel(self, execTask, workflow):
         tasklist = []
@@ -49,51 +56,58 @@ class qos:
         execTime = {}
         cost = {}
         execTask = {}
-        # service functions: select only one per service:
-        for service in self.mod.services:
-            vars.clear()
-            fs = self.rep.getFunctionsByServiceName(service.name)
-            for f in fs:
-                vars[f.name] = Bool(f.name)
-                execTime[f.name] = If(vars[f.name], RealVal(f.execTime), RealVal(0))
-                cost[f.name] = If(vars[f.name], RealVal(f.cost), RealVal(0))
-            opt.add(Sum([If(b,1,0) for b in vars.values()]) == 1)
-        # calculate cost and execTime per task:
-        start_time_qos = datetime.datetime.now()
-        taskExecTime = {}
-        taskCost = {}
-        for task in self.mod.tasks:
-            taskExecTime[task.name] = RealVal(0)
-            taskCost[task.name] = RealVal(0)
-            for service in task.services:
-                for f in self.rep.functions:
-                    if f.servicename == service.name:
-                        taskExecTime[task.name] = Sum(taskExecTime[task.name], execTime[f.name])
-                        taskCost[task.name] = Sum(taskCost[task.name], cost[f.name])
-        # calculate total cost and execTime:
-        totalCost = RealVal(0)
-        maxtime = Real('maxTime')
-        for task in self.mod.tasks:
-            execTask[task.name] = Bool(task.name)
-            totalCost = Sum(totalCost, If(execTask[task.name], taskCost[task.name], 0))
+        if len(execTask) == 0:
+            # service functions: select only one per service:
+            for service in self.mod.services:
+                vars.clear()
+                fs = self.rep.getFunctionsByServiceName(service.name)
+                for f in fs:
+                    vars[f.name] = Bool(f.name)
+                    execTime[f.name] = If(vars[f.name], RealVal(f.execTime), RealVal(0))
+                    cost[f.name] = If(vars[f.name], RealVal(f.cost), RealVal(0))
+                opt.add(Sum([If(b,1,0) for b in vars.values()]) == 1)
+            # calculate cost and execTime per task:
+            start_time_qos = datetime.datetime.now()
+            taskExecTime = {}
+            taskCost = {}
+            for task in self.mod.tasks:
+                taskExecTime[task.name] = RealVal(0)
+                taskCost[task.name] = RealVal(0)
+                for service in task.services:
+                    for f in self.rep.functions:
+                        if f.servicename == service.name:
+                            taskExecTime[task.name] = Sum(taskExecTime[task.name], execTime[f.name])
+                            taskCost[task.name] = Sum(taskCost[task.name], cost[f.name])
+            # calculate total cost and execTime:
+            totalCost = RealVal(0)
+            maxtime = Real('maxTime')
+            for task in self.mod.tasks:
+                execTask[task.name] = Bool(task.name)
+                totalCost = Sum(totalCost, If(execTask[task.name], taskCost[task.name], 0))
+            # define model:
+            start_time_wf = datetime.datetime.now()
+            for wf in self.mod.workflows:
+                wm = self.getWorkflowModel(execTask, wf)
+                opt.add(wm)
+            self.opt = opt
+            self.execTask = execTask
+            self.TaskExecTime = taskExecTime
+            self.totalCost = totalCost
+        opt = self.opt
+        execTask = self.execTask
+        taskExecTime = self.taskExecTime
+        totalCost = self.totalCost
+        start_time_opt = datetime.datetime.now()
         if self.objective == MINCOST:
             if self.tmax != 0:
                 for task in self.mod.tasks:
                     opt.add(If(execTask[task.name], taskExecTime[task.name] <= RealVal(self.tmax), True))
+            opt.minimize(totalCost)
         elif self.objective == MINTIME:
             for task in self.mod.tasks:
                 opt.add(If(execTask[task.name], taskExecTime[task.name] <= maxtime, True))
             if self.cmax != 0:
                 opt.add(totalCost <= RealVal(self.cmax))
-        # define model:
-        start_time_wf = datetime.datetime.now()
-        for wf in self.mod.workflows:
-            wm = self.getWorkflowModel(execTask, wf)
-            opt.add(wm)
-        start_time_opt = datetime.datetime.now()
-        if self.objective == MINCOST:
-            opt.minimize(totalCost)
-        elif self.objective == MINTIME:
             opt.minimize(maxtime)
         if opt.check() == sat:
             z3m = opt.model()

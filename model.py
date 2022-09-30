@@ -32,6 +32,7 @@ class model:
                     self.services.append(s)
                 self.tasks.append(t)
                 print("Task " + t.name + " loaded")
+            self.constraints = data['constraints']
     
     def createTasks(self,wf,ntask,ntasks): # ntasks pending to create
         ops = (['and', 'or', 'xor'])

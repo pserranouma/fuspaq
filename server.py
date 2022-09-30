@@ -1,7 +1,7 @@
 import socketserver
 import http.server
 import requests
-import configuration
+import datetime
 
 class server:
     def __init__(self, config, qosmodel, port = 8081, portqos = 8082, faasserver = '127.0.0.1', faasport = 8080):
@@ -34,6 +34,18 @@ class server:
             value = vals[1]
             if action == "objective":
                 server.qosmodel.readObjective(value)
+            if action == "tmax":
+                server.qosmodel.tmax = value
+                print("tmax set to " + value)
+            if action == "cmax":
+                server.qosmodel.cmax = value
+                print("cmax set to " + value)
+            start_time = datetime.datetime.now()
+            server.qosmodel.createZ3Model(server.config)
+            end_time = datetime.datetime.now()
+            time_diff = (end_time - start_time)
+            execution_time = time_diff.total_seconds() * 1000
+            print(f'Reconfiguration time: {execution_time:.2f} milliseconds')
             self.send_response(200)
             self.end_headers()
 

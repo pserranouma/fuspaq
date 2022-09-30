@@ -9,7 +9,7 @@ import threading
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        print("Use: python fuspaq.py repository model objetive")
+        print("Use: python fuspaq.py repository model objective")
         exit()
 
 rep = repository.repository()

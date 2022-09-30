@@ -1,0 +1,33 @@
+{
+    "model": "widget",
+    "tasks": [
+        {
+            "name": "ShowPhotos"
+        },
+        {
+            "name": "LocalInfo"
+        }
+    ],
+    "services": [
+        {
+            "name": "GetLocations",
+            "function": "get-locationsradious1"
+        },
+        {
+            "name": "GetImages",
+            "function": "get-images-b"
+        },
+        {
+            "name": "RenderImages",
+            "function": "render-imagesresolution480number1"
+        },
+        {
+            "name": "GetSensorData",
+            "function": "get-sensor-data-b"
+        },
+        {
+            "name": "ShowData",
+            "function": "show-data-b"
+        }
+    ]
+}
