@@ -1,5 +1,5 @@
 # Fuspaq
-Fuspaq is a platform that integrates with FaaS platforms to allow applications to adjust QoS parameters based on alternative service implementations or its configuration settings.
+Fuspaq is a platform that integrates with FaaS platforms to allow serverless applications to adjust QoS parameters based on alternative service implementations or its configuration settings.
 This is a project of the University of Málaga (Spain).
 
 # Requirements
