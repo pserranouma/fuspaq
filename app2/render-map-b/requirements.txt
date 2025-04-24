@@ -1,0 +1,4 @@
+osmapi
+Pillow
+requests
+

@@ -1,0 +1,18 @@
+FROM python:3.9-slim
+
+# Actualizar pip y setuptools
+RUN pip install --upgrade pip setuptools
+
+# Copiar los archivos de la función
+WORKDIR /function
+COPY . /function
+8m68
+# Instalar las dependencias desde requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Expose port of the function (if necessary)
+EXPOSE 8080
+
+# Command to execute the function (using http template)
+CMD ["python3", "process-model-a.py"]
+
