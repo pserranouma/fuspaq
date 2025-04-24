@@ -81,24 +81,24 @@
 			"ux": 0
 		},
 		{
-			"name": "process-model-a",
-			"service": "ProcessModel",
+			"name": "predict-model-a",
+			"service": "PredictModel",
 			"execTime": 10,
 			"cost": 12,
 			"energy": 10.8,
 			"ux": 0
 		},
 		{
-			"name": "process-model-b",
-			"service": "ProcessModel",
+			"name": "predict-model-b",
+			"service": "PredictModel",
 			"execTime": 10,
 			"cost": 12,
 			"energy": 3.6,
 			"ux": 0
 		},
 		{
-			"name": "process-model-c",
-			"service": "ProcessModel",
+			"name": "predict-model-c",
+			"service": "PredictModel",
 			"execTime": 10,
 			"cost": 12,
 			"energy": 1.4,

@@ -76,8 +76,8 @@
 					"name": "GetModelData"
 				},
 				{
-					"description": "Process Model",
-					"name": "ProcessModel"
+					"description": "Predict Model",
+					"name": "PredictModel"
 				},
 				{
 					"description": "Render Map",

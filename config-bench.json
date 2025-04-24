@@ -1,0 +1,22 @@
+{
+    "model": "model",
+    "tasks": [
+        {
+            "name": "t1"
+        }
+    ],
+    "services": [
+        {
+            "name": "Op1_t1",
+            "function": "f10_o1_t1"
+        },
+        {
+            "name": "Op2_t1",
+            "function": "f5_o2_t1"
+        },
+        {
+            "name": "Op3_t1",
+            "function": "f9_o3_t1"
+        }
+    ]
+}

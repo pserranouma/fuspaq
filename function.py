@@ -12,3 +12,12 @@ class function:
         self.params = params
         self.execTime = 0
         self.cost = 0
+        self.ux = 0
+        # energy management:
+        self.energy = 0
+        self.consData = []
+        self.consDataLast = 0
+        self.consDataStart = 0
+        self.consDataTotal = -1
+        self.startTime = 0
+        self.replicas = 1

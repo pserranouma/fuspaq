@@ -2,6 +2,7 @@ import json
 import task
 import service
 import threading
+import requests
 
 class configuration:
 
@@ -64,6 +65,18 @@ class configuration:
         print("Executing task " + taskconfig.name)
         for i in range(len(taskconfig.services)):
             repository.executeFunction(taskconfig.services[i].function)
+
+    def execService(self, servname, verbose = True):
+        try:
+            print("Executing service " + servname)
+            r = requests.get("http://127.0.0.1:8083/" + servname, params={})
+            if verbose: print(r.content)
+        except:
+            if verbose: print("Error: FaaS server not reachable")
+
+    def execServices(self):
+        for s in self.services:
+            self.execService(s.name)
 
     def exec(self, repository, model, workflow):
         op = workflow.get('op')

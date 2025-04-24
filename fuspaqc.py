@@ -26,7 +26,7 @@ end_time = datetime.datetime.now()
 time_diff = (end_time - start_time)
 execution_time = time_diff.total_seconds() * 1000
 print(f'Execution time: {execution_time:.2f} milliseconds')
-#config.save(mod, 'config')
+config.save(mod, 'configc')
 s = server.server(config, qosmodel, 'test4')
 x = threading.Thread(target=s.startqos, daemon=True)
 x.start()

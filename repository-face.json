@@ -1,0 +1,60 @@
+{
+	"functions": [
+		{
+			"name": "move-detect-a",
+			"service": "MoveDetect",
+			"execTime": 1,
+			"cost": 2,
+			"ux": 2,
+			"energy": 55
+		},
+		{
+			"name": "face-detect-a",
+			"service": "FaceDetect",
+			"execTime": 2,
+			"cost": 9,
+			"ux": 9,
+			"energy": 4.6
+		},
+		{
+			"name": "face-detect-b",
+			"service": "FaceDetect",
+			"execTime": 2,
+			"cost": 8,
+			"ux": 8,
+			"energy": 4.7
+		},
+		{
+			"name": "search-db-a",
+			"service": "SearchDb",
+			"execTime": 3,
+			"cost": 2,
+			"ux": 2,
+			"energy": 55
+		},
+		{
+			"name": "write-result-a",
+			"service": "WriteResult",
+			"execTime": 4,
+			"cost": 2,
+			"ux": 2,
+			"energy": 55
+		},
+		{
+			"name": "draw-image-a",
+			"service": "DrawImage",
+			"execTime": 1,
+			"cost": 2,
+			"ux": 2,
+			"energy": 55
+		},
+		{
+			"name": "draw-rect-a",
+			"service": "DrawRect",
+			"execTime": 1,
+			"cost": 2,
+			"ux": 2,
+			"energy": 55
+		}
+	]
+}

@@ -34,7 +34,7 @@ class model:
                 print("Task " + t.name + " loaded")
             self.constraints = data['constraints']
     
-    def createTasks(self,wf,ntask,ntasks): # ntasks pending to create
+    def createTasks(self, wf, ntask, ntasks): # ntasks pending to create
         ops = (['and', 'or', 'xor'])
         wf["op"] = choice(ops)
         wf["tasks"] = []
@@ -62,21 +62,21 @@ class model:
                 ntasks -= 1
                 wf["tasks"].append(t)
             else:
-                tipo = randint(0,1)
-                if tipo == 0: # simple
+                type = randint(0,1)
+                if type == 0: # simple
                     t = {}
                     t["name"] = "t"+ str(nt)
                     nt += 1
                     ntasks -= 1
                     wf["tasks"].append(t)
-                else: # compuesta
+                else: # compound
                     if ntasks_ant != ntasks:
                         nwf = {}
                         self.createTasks(nwf,nt,ntasks)
                         wf["tasks"].append(nwf)
                         ntasks = 0
 
-    def createParallelTasks(self,wf,ntask,ntasks): # ntasks pending to create
+    def createParallelTasks(self, wf, ntask, ntasks): # ntasks pending to create
         wf["op"] = 'and'
         wf["tasks"] = []
         #print(wf["op"])
@@ -91,7 +91,7 @@ class model:
             ntasks -= 1
             wf["tasks"].append(t)
 
-    def loadDummy(self, numtasks, numops):
+    def loadDummy(self, numtasks, numops):  # create dummy model 
         print("Loading dummy model")
         self.name = "model"
         wf={}
@@ -101,7 +101,7 @@ class model:
         for i in range(1, numtasks + 1):
             t = task.task("t" + str(i))
             for j in range(1, numops + 1):
-                s = service.service("op" + str(j))
+                s = service.service("Op"+ str(j) + "_t" + str(i))
                 t.addService(s)
                 self.services.append(s)
             self.tasks.append(t)
@@ -110,7 +110,7 @@ class model:
         #with open('p.json', 'w') as file:
             #file.write(jsondata)
 
-    def loadDummyParallel(self, numtasks, numops):
+    def loadDummyParallel(self, numtasks, numops):  # create dummy model with parallel tasks
         print("Loading dummy model")
         self.name = "model"
         wf={}
@@ -120,13 +120,13 @@ class model:
         for i in range(1, numtasks + 1):
             t = task.task("t" + str(i))
             for j in range(1, numops + 1):
-                s = service.service("op"+ str(i) + "_" + str(j))
+                s = service.service("Op"+ str(j) + "_t" + str(i))
                 t.addService(s)
                 self.services.append(s)
             self.tasks.append(t)
         print(str(numtasks) + " tasks loaded")
 
-    def loadDummyOps(self, model, numtasks, numops):
+    def loadDummyOps(self, model, numtasks, numops):  # create dummy ops
         print("Loading model " + model)
         with open(model + ".json") as file:
             data = json.load(file)
@@ -141,7 +141,7 @@ class model:
         for i in range(1,numtasks+1):
             t = task.task("t" + str(i))
             for j in range(1,numops+1):
-                s = service.service("op" + str(j))
+                s = service.service("Op" + str(j))
                 t.addService(s)
                 self.services.append(s)
             self.tasks.append(t)
