@@ -1,4 +1,6 @@
-deepface
+torch
+torchvision
 opencv-python-headless
 numpy
+requests
 
