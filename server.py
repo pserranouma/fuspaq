@@ -8,7 +8,7 @@ import locale
 import qos
 import urllib.parse
 import json
-from auxfunc import readData
+from auxfunc import readData, readDataOpenFaaS
 
 MAXRATE = 60000
 TRIGGER_PERCENT = 30
@@ -159,8 +159,8 @@ class server:
                     if server.verbose: print(r.text)
                     event = ''
                     # get prometheus information (execution time and rate):
-                    exectime, nd = readData("http://" + server.faasserver + ":9090" + "/api/v1/query?query=(rate(gateway_functions_seconds_sum{function_name=\"" + fname + ".openfaas-fn\"}[1m])/rate(gateway_functions_seconds_count{function_name=\"" + fname + ".openfaas-fn\"}[1m]))", 1, "Execution time", server.verbose)
-                    rate, nd = readData("http://" + server.faasserver + ":9090" + "/api/v1/query?query=increase(gateway_function_invocation_total{function_name=\"" + fname + ".openfaas-fn\"}[1m])" , 1, "Rate", server.verbose)
+                    exectime, nd = readDataOpenFaaS("http://" + server.faasserver + ":9090" + "/api/v1/query?query=(rate(gateway_functions_seconds_sum{function_name=\"" + fname + ".openfaas-fn\"}[1m])/rate(gateway_functions_seconds_count{function_name=\"" + fname + ".openfaas-fn\"}[1m]))", "Execution time", server.verbose)
+                    rate, nd = readDataOpenFaaS("http://" + server.faasserver + ":9090" + "/api/v1/query?query=increase(gateway_function_invocation_total{function_name=\"" + fname + ".openfaas-fn\"}[1m])" , "Rate", server.verbose)
                     if (rate == None) or (rate < 1): rate = 1
                     instances = self.getInstances(fname)
                     # search all active instances (replicas) to also capture idle consumptions:
@@ -182,17 +182,17 @@ class server:
                         if server.verbose:
                             print("instance " + str(i) + " " + instance)
                             print("pid " + pid)
-                        cons, nd = readData("http://" + server.faasserver + ":9090" + "/api/v1/query?query=rate(kepler_container_joules_total{container_name=~\"" + fname + "\",container_id=~\"" + instance + ".*\"}[1m])" , 1, "Consumption", server.verbose)
+                        cons, nd = readData("http://" + server.faasserver + ":9090" + "/api/v1/query?query=rate(kepler_container_joules_total{container_name=~\"" + fname + "\",container_id=~\"" + instance + ".*\"}[1m])" , "Consumption", server.verbose)
                         if iname == instances[i]['name']:
                             cons_instance = cons
                             if server.verbose: print("(Main instance)")
                         total_cons += cons
-                        energy, ienergy = readData("http://" + server.faasserver + ":9090" + "/api/v1/query?query=increase(kepler_container_joules_total{container_name=~\"" + fname + "\",container_id=~\"" + instance + ".*\"}[1m])" , 2, "Energy", server.verbose)                      
+                        energy, ienergy = readData("http://" + server.faasserver + ":9090" + "/api/v1/query?query=increase(kepler_container_joules_total{container_name=~\"" + fname + "\",container_id=~\"" + instance + ".*\"}[1m])" , "Energy", server.verbose)                      
                         if iname == instances[i]['name']:
                             energy_instance = energy
                         total_energy += energy
                         total_ienergy += ienergy
-                        energy_dram, ienergy_dram = readData("http://" + server.faasserver + ":9090" + "/api/v1/query?query=increase(kepler_container_dram_joules_total{container_name=~\"" + fname + "\",container_id=~\"" + instance + ".*\"}[1m])" , 2, "Energy dram", server.verbose)
+                        energy_dram, ienergy_dram = readData("http://" + server.faasserver + ":9090" + "/api/v1/query?query=increase(kepler_container_dram_joules_total{container_name=~\"" + fname + "\",container_id=~\"" + instance + ".*\"}[1m])" , "Energy dram", server.verbose)
                         if iname == instances[i]['name']:
                             energy_instance = energy_dram
                         total_energy_dram += energy_dram
@@ -228,7 +228,7 @@ class server:
                     avg_energy = avg_energy / f.consDataTotal
                     if server.verbose: print("Average energy: " + str(avg_energy))
                     # update function values if necessary:
-                    energy = avg_energy #* exectime
+                    energy = avg_energy
                     time_diff = t - f.startTime
                     seconds = time_diff.total_seconds()
                     if seconds > (server.AVG_INTERVAL*2):  # setup time

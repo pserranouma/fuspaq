@@ -42,7 +42,7 @@ def showinfo(location):
     location  = json.loads(location)
     modeldata = servicepost("GetModelData", location)
     modeldata  = json.loads(modeldata)
-    info = servicepost("ProcessModel", modeldata)
+    info = servicepost("PredictModel", modeldata)
     info = json.loads(info)
     info.update(location)
     renderedmap = servicepost("RenderMap", info)
@@ -58,10 +58,7 @@ def app():
     thread2.join()
 
 def processmodel(modeldata):
-    info = servicepost("ProcessModel", modeldata)
-    info = json.loads(info)
-    info.update(location)
-    renderedmap = servicepost("RenderMap", info)
+    servicepost("ProcessModel", modeldata)
 
 def predictmodel(modeldata):
     servicepost("PredictModel", modeldata)
@@ -117,7 +114,7 @@ for i in range(n):
     renderedmap = servicepost("RenderMap", info) """
 
 # test showinfo / predict:
-n=100
+""" n=5000
 for i in range(n):
     location = servicepost("GetLocation", {"address":{"city":"Málaga"}})
     location  = json.loads(location)
@@ -126,10 +123,10 @@ for i in range(n):
     info = servicepost("PredictModel", modeldata)
     info = json.loads(info)
     info.update(location)
-    renderedmap = servicepost("RenderMap", info)
+    renderedmap = servicepost("RenderMap", info) """
 
 # test showphotos and showinfo:
-""" n=5000
+n=200
 for i in range(n):
     location = servicepost("GetLocation", {"address":{"city":"Málaga"}})
     thread1 = threading.Thread(target=showphotos, args={location})
@@ -137,7 +134,7 @@ for i in range(n):
     thread1.start()
     thread2.start()
     thread1.join()
-    thread2.join() """
+    thread2.join()
 
 # test concurrent connections:
 """ location = servicepost("GetLocation", {"address":{"city":"Málaga"}})

@@ -1,3 +1,4 @@
+import base64
 import socketserver
 import http.server
 import requests
@@ -29,39 +30,34 @@ def servicepost(serv, params = {}):
         if verbose: print("Error:", type(error).__name__)
         return "{}"
 
-def showphotos(location):
-    location  = json.loads(location)
-    location["distance"] = 1
-    nearlocations = servicepost("GetNearLocations", location)
-    nearlocations  = json.loads(nearlocations)
-    images = servicepost("GetImages", nearlocations)
-    images = json.loads(images)
-    renderedimages = servicepost("RenderImages", images)
+def analizing(image_url, rects):
+    facedata = rects
+    facedata.update({"image_url": image_url})
+    data = servicepost("SearchDb", facedata)
+    data  = json.loads(data)
+    identity = servicepost("GetImages", data)
 
-def showinfo(location):
-    location  = json.loads(location)
-    modeldata = servicepost("GetModelData", location)
-    modeldata  = json.loads(modeldata)
-    info = servicepost("ProcessModel", modeldata)
-    info = json.loads(info)
-    info.update(location)
-    renderedmap = servicepost("RenderMap", info)
+def drawing(image_url, rects):
+    image = servicepost("DrawImage", image_url)
+    image = servicepost("DrawRect", rects)
 
 def app():
-    location = servicepost("GetLocation", {"address":{"city":"Málaga"}})
-    location  = json.loads(location)
-    thread1 = threading.Thread(target=showphotos, args={location})
-    thread2 = threading.Thread(target=showinfo, args={location})
+    image1_url = "https://images.unsplash.com/photo-1668004828851-af95a042793e?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    image2_url = "https://images.unsplash.com/photo-1668004841450-5f5bda6c4564?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    res = servicepost("MoveDetect", {
+    "image1_url": image1_url,
+    "image2_url": image2_url
+    })
+    res  = json.loads(res)
+    if (res["motion_detected"] == "true"):
+        rects = servicepost("DetectFace", {"image_url":image2_url})
+        rects  = json.loads(rects)
+    thread1 = threading.Thread(target=analizing, args={image2_url, rects})
+    thread2 = threading.Thread(target=drawing, args={image2_url, rects})
     thread1.start()
     thread2.start()
     thread1.join()
     thread2.join()
-
-def processmodel(modeldata):
-    info = servicepost("ProcessModel", modeldata)
-    info = json.loads(info)
-    info.update(location)
-    renderedmap = servicepost("RenderMap", info)
 
 def getInstance(fname):
     proc = subprocess.run(["faas", "logs", fname, "--instance", "--lines", "1", "--tail=false"], capture_output=True, text=True)
@@ -88,37 +84,61 @@ def getInstances(fname):  # search all active instances (replicas):
             instance['cid'] = cid
             instances.append(instance)
     return instances
-        
-# test findface:
-import base64
-with open("image1.png", "rb") as f:
-    img1_base64 = base64.b64encode(f.read()).decode()
-with open("image2.png", "rb") as f:
-    img2_base64 = base64.b64encode(f.read()).decode()
-res = servicepost("DetectFace", {"image1":img1_base64, "image2":img2_base64})
-if (res["motion_detected"] == "true"):
-    rects = servicepost("DetectFace", {"image":img2_base64})
-    rects  = json.loads(rects)
 
-# test showphotos and showinfo:
-n=100
+# test services:
+image1 = "17443.jpg"
+image2 = "17476.jpg"
+image1_url = ""
+image2_url = ""
+with open(image1, 'rb') as img_file:
+    image1_base64 = base64.b64encode(img_file.read()).decode('utf-8')
+with open(image1, 'rb') as img_file:
+    image2_base64 = base64.b64encode(img_file.read()).decode('utf-8')
+n=500
 for i in range(n):
-    location = servicepost("GetLocation", {"address":{"city":"Málaga"}})
-    thread1 = threading.Thread(target=showphotos, args={location})
-    thread2 = threading.Thread(target=showinfo, args={location})
-    thread1.start()
-    thread2.start()
-    thread1.join()
-    thread2.join()
+    #res = servicepost("MoveDetect", {"image1_url": image1_url,"image2_url": image2_url})
+    #res  = json.loads(res)
+    if True:#(res["motion_detected"]):
+        #rects = servicepost("FaceDetect", {"image_url": image2_url})
+        #rects  = json.loads(rects)
+        rects = {"faces": [{"x": 133, "y": 38, "w": 46, "h": 46}]}
+        #image = servicepost("DrawImage", {"image_url":image2_url})
+        #rects.update({"image_url": image2_url})
+        #image = servicepost("DrawRect", rects)
+        known_faces = servicepost("SearchDb", {"client_id": 1})
+        known_faces = json.loads(known_faces)
+        known_faces.update({"image_url": image2_url})
+        res = servicepost("GetIdentity", known_faces)
+
+
+"""     res = servicepost("MoveDetect", {"image1_url": image1_url,"image2_url": image2_url})
+    res  = json.loads(res)
+    if (res["motion_detected"]):
+        rects = servicepost("FaceDetect", {"image_url":image2_url})
+        rects  = json.loads(rects)
+        image = servicepost("DrawImage", {"image_url":image2_url})
+        rects.update({"image_url": image2_url})
+        image = servicepost("DrawRect", rects)
+        known_faces = servicepost("SearchDb", {"client_id": 1}) """
+
+# test app:
+""" n=1
+for i in range(n):
+    app() """
 
 # test concurrent connections:
-""" location = servicepost("GetLocation", {"address":{"city":"Málaga"}})
-location  = json.loads(location)
-modeldata = servicepost("GetModelData", location)
+""" res = servicepost("MoveDetect", {
+    "image1_url": "https://images.unsplash.com/photo-1668004828851-af95a042793e?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "image2_url": "https://images.unsplash.com/photo-1668004841450-5f5bda6c4564?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    })
+    res  = json.loads(res)
+    if (res["motion_detected"] == "true"):
+        rects = servicepost("DetectFace", {"image_url":"https://images.unsplash.com/photo-1668004841450-5f5bda6c4564?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"})
+        rects  = json.loads(rects)
 def daemon():
     n = 1
     for i in range(n):
-        x = threading.Thread(target=processmodel, args={modeldata})
+        x = threading.Thread(target=processmodel, args={data})
         x.start()
         x.join()
 
